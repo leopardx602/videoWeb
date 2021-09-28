@@ -2,11 +2,11 @@ function showVideo(videoName ,videoEpisode){
   console.log(videoEpisode)
   $("#media").css("display", "block")
   $(".shadow").css("display", "block")
-  var text = `<video controls>`
+  var text = `<div><video controls>`
   text += `<source src="onePunch01.mp4">`
   text += `<source src="/play/${videoName}_${videoEpisode}">`
   text += `<track src="onePunch01.vtt" id="track01" kind="subtitles" label="ch" srclang="zh" default>`
-  text += '</video>'
+  text += '</video></div>'
   $("#mediaBody").html(text)
 }
 $(document).ready(function(){

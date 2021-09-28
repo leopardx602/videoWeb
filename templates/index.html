@@ -7,18 +7,25 @@
   <script src="../static/js/index.js" type="text/javascript"></script>
   <script src="https://kit.fontawesome.com/c416c8b21d.js" crossorigin="anonymous"></script>
 </head>
-<body>
-  <div id="menu">
-    <div onclick="getVideoFolderList('animation')">動畫</div>
-    <div>電影</div>
-    <div>影集</div>
+<body background="../static/img/background.jpg"></body>
+
+  <div id="shell">
+    <div id="menu">
+      <div onclick="getVideoFolderList('animation')">動畫</div>
+      <div>電影</div>
+      <div>影集</div>
+    </div>
+    <div id="content"></div>
   </div>
-  <div id="content"></div>
 
   <div class="shadow"></div>
   <div id="media">
     <div id="meidaClose" class="icon"><i class="far fa-times-circle"></i></div>
     <div id="mediaBody"></div>
   </div>
+
+  <script>
+    getVideoFolderList('animation')
+  </script>
 	
 </body>
