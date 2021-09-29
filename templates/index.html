@@ -3,15 +3,16 @@
   <meta charset="utf-8">
   <title>Golang!</title>
   <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="../static/css/basic.css">
   <link rel="stylesheet" type="text/css" href="../static/css/index.css">
   <script src="../static/js/index.js" type="text/javascript"></script>
   <script src="https://kit.fontawesome.com/c416c8b21d.js" crossorigin="anonymous"></script>
 </head>
-<body background="../static/img/background.jpg"></body>
+<body background="../static/img/background.jpg">
 
   <div id="shell">
     <div id="menu">
-      <div onclick="getVideoFolderList('animation')">動畫</div>
+      <div><a href="/animation">動畫</a></div>
       <div>電影</div>
       <div>影集</div>
     </div>
@@ -23,9 +24,8 @@
     <div id="meidaClose" class="icon"><i class="far fa-times-circle"></i></div>
     <div id="mediaBody"></div>
   </div>
-
   <script>
-    getVideoFolderList('animation')
+    getVideoFolderList({{.videoFolderList}})
   </script>
 	
 </body>

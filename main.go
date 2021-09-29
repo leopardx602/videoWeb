@@ -61,10 +61,20 @@ func main() {
 		ctx.HTML(200, "index.html", gin.H{})
 	})
 
-	router.GET("/videoList", func(ctx *gin.Context) {
-		fmt.Println(videoFolderList)
-		ctx.JSON(200, gin.H{"data": videoFolderList})
+	router.GET("/animation", func(ctx *gin.Context) {
+		ctx.HTML(200, "index.html", gin.H{"videoFolderList": videoFolderList})
 	})
+	router.GET("/movie", func(ctx *gin.Context) {
+		ctx.HTML(200, "index.html", gin.H{"videoFolderList": videoFolderList})
+	})
+	router.GET("/series", func(ctx *gin.Context) {
+		ctx.HTML(200, "index.html", gin.H{"videoFolderList": videoFolderList})
+	})
+
+	// router.GET("/videoList", func(ctx *gin.Context) {
+	// 	fmt.Println(videoFolderList)
+	// 	ctx.JSON(200, gin.H{"data": videoFolderList})
+	// })
 
 	router.GET("/videoList/:videoName", func(ctx *gin.Context) {
 		videoName := ctx.Param("videoName")

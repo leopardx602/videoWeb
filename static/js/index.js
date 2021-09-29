@@ -1,27 +1,48 @@
 var videoFolderList = []
-function getVideoFolderList(videoType){
-  console.log(videoType)
-  $.get("/videoList", function(data) {
-    console.log(data)
-    var text = ""
-    Object.keys(data.data).forEach(key => {
-      text += `<a href="/videoList/${data.data[key]}">`
-      text += `<div class="cell btn">`
-      text += `<div>`
-      text += `<img class="cover" src="/play/${data.data[key]}_cover.jpg">`
-      text += `</img>`
-      text += `</div>`
-      text += `<div class="videoTitle">`
-      text += `${data.data[key]}`
-      text += `</div>`
-      text += `</div>`
-      text += "</a>"
-      console.log(data.data[key])
-      videoFolderList.push(data.data[key])
-    })
-    $("#content").html(text)
-  });
+function getVideoFolderList(data){
+  console.log(data)
+  var text = ""
+  Object.keys(data).forEach(key => {
+    text += `<a href="/videoList/${data[key]}">`
+    text += `<div class="cell btn">`
+    text += `<div>`
+    text += `<img class="cover" src="/play/${data[key]}_cover.jpg">`
+    text += `</img>`
+    text += `</div>`
+    text += `<div class="videoTitle">`
+    text += `${data[key]}`
+    text += `</div>`
+    text += `</div>`
+    text += "</a>"
+    console.log(data[key])
+    videoFolderList.push(data[key])
+  })
+  $("#content").html(text)
+
 }
+// function getVideoFolderList(videoType){
+//   console.log(videoType)
+//   $.get("/videoList", function(data) {
+//     console.log(data)
+//     var text = ""
+//     Object.keys(data.data).forEach(key => {
+//       text += `<a href="/videoList/${data.data[key]}">`
+//       text += `<div class="cell btn">`
+//       text += `<div>`
+//       text += `<img class="cover" src="/play/${data.data[key]}_cover.jpg">`
+//       text += `</img>`
+//       text += `</div>`
+//       text += `<div class="videoTitle">`
+//       text += `${data.data[key]}`
+//       text += `</div>`
+//       text += `</div>`
+//       text += "</a>"
+//       console.log(data.data[key])
+//       videoFolderList.push(data.data[key])
+//     })
+//     $("#content").html(text)
+//   });
+// }
 
 
 
