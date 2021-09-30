@@ -8,7 +8,9 @@ function showEpisode(videoName, episode){
   $("#episodeList").html(text)
 
   $.get(`/videoList/${videoName}/info`, function(data) {
-    $("#synopsis").html(data.data)
+    console.log(data)
+    $("#videoName").html(data.name)
+    $("#synopsis").html(data.synopsis)
   })
 }
 

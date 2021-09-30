@@ -9,52 +9,60 @@ import (
 	"github.com/leopardx602/goTool"
 )
 
-type Video struct {
+type VideoInfo struct {
 	name     string
 	episode  []string
 	synopsis string
 }
 
+type Video struct {
+	Animation []VideoInfo
+	Movie     []VideoInfo
+	Series    []VideoInfo
+}
+
 func main() {
 	workPath := "D:/downloads/video/"
 
-	// get video folders
-	var videoFolderList []string
-	files, _ := ioutil.ReadDir(workPath)
-	for _, f := range files {
-		//fmt.Println(f.Name())
-		videoFolderList = append(videoFolderList, f.Name())
-	}
-	fmt.Println(videoFolderList)
+	//var video Video
 
-	// get videos
-	videoList := make(map[string]Video)
-	for _, folder := range videoFolderList {
-		// get episode
-		files2, _ := ioutil.ReadDir(workPath + folder)
-		var videoTmp Video
-		videoTmp.name = folder
-		for _, video := range files2 {
-			fmt.Println(video.Name())
-			if strings.Contains(video.Name(), ".mkv") {
-				videoTmp.episode = append(videoTmp.episode, video.Name())
+	video := map[string][]string{}
+	videoList := make(map[string]VideoInfo)
+
+	videoType, _ := ioutil.ReadDir(workPath)
+	for _, vt := range videoType { // animaion
+		videoName, _ := ioutil.ReadDir(workPath + "/" + vt.Name())
+		for _, vn := range videoName { // one punch
+			video[vt.Name()] = append(video[vt.Name()], vn.Name())
+			var videoTmp VideoInfo
+			videoTmp.name = vn.Name()
+			videoEpisode, _ := ioutil.ReadDir(workPath + "/" + vt.Name() + "/" + vn.Name())
+
+			for _, videoFile := range videoEpisode {
+				fmt.Println(videoFile.Name())
+				if strings.Contains(videoFile.Name(), ".mkv") {
+					videoTmp.episode = append(videoTmp.episode, videoFile.Name())
+				}
 			}
+
+			// get synopsis
+			data, err := goTool.ReadJson(workPath + vt.Name() + "/" + vn.Name() + "/info.json")
+			if err != nil {
+				fmt.Println(err)
+				videoList[vn.Name()] = videoTmp
+				continue
+			}
+			videoTmp.synopsis = data["synopsis"].(string)
+			videoTmp.name = data["name"].(string)
+			videoList[vn.Name()] = videoTmp
 		}
 
-		// get synopsis
-		data, err := goTool.ReadJson(workPath + folder + "/info.json")
-		if err != nil {
-			fmt.Println(err)
-			videoList[folder] = videoTmp
-			continue
-		}
-		videoTmp.synopsis = data["synopsis"].(string)
-		videoList[folder] = videoTmp
 	}
-	fmt.Println("==============")
-	fmt.Println("videoList", videoList)
+	fmt.Println(video)
+	fmt.Println("===============")
+	fmt.Println(videoList)
 
-	// http server
+	// // http server
 	router := gin.Default()
 	router.LoadHTMLGlob("templates/*.html")
 	router.GET("/", func(ctx *gin.Context) {
@@ -62,13 +70,13 @@ func main() {
 	})
 
 	router.GET("/animation", func(ctx *gin.Context) {
-		ctx.HTML(200, "index.html", gin.H{"videoFolderList": videoFolderList})
+		ctx.HTML(200, "index.html", gin.H{"videoFolderList": video["animation"]})
 	})
 	router.GET("/movie", func(ctx *gin.Context) {
-		ctx.HTML(200, "index.html", gin.H{"videoFolderList": videoFolderList})
+		ctx.HTML(200, "index.html", gin.H{"videoFolderList": video["movie"]})
 	})
 	router.GET("/series", func(ctx *gin.Context) {
-		ctx.HTML(200, "index.html", gin.H{"videoFolderList": videoFolderList})
+		ctx.HTML(200, "index.html", gin.H{"videoFolderList": video["series"]})
 	})
 
 	// router.GET("/videoList", func(ctx *gin.Context) {
@@ -85,14 +93,14 @@ func main() {
 	router.GET("/videoList/:videoName/info", func(ctx *gin.Context) {
 		videoName := ctx.Param("videoName")
 		fmt.Println(videoName)
-		ctx.JSON(200, gin.H{"data": videoList[videoName].synopsis})
+		ctx.JSON(200, gin.H{"synopsis": videoList[videoName].synopsis, "name": videoList[videoName].name})
 	})
 
 	router.GET("/play/:videoPath", func(ctx *gin.Context) {
 		videoPath := ctx.Param("videoPath")
 		videoPath = strings.Replace(videoPath, "_", "/", -1)
 		fmt.Println(workPath + videoPath)
-		ctx.File(workPath + videoPath)
+		ctx.File(workPath + "/animation/" + videoPath)
 	})
 
 	// css javascript
