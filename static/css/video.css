@@ -17,8 +17,8 @@
 	transform: translateX(-50%) translateY(-50%);
   z-index: 2;
   
-  width:90%;
-  height:90%;
+  width:80vw;
+  height:45vw;
   
   background-color: #000;
   border:5px solid #333;

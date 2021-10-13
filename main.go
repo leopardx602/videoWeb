@@ -9,6 +9,10 @@ import (
 	"github.com/leopardx602/goTool"
 )
 
+var workPath = "/media/chen/hardDrive/video2"
+var video = map[string][]string{}
+var videoList = make(map[string]VideoInfo)
+
 type VideoInfo struct {
 	name     string
 	episode  []string
@@ -21,46 +25,57 @@ type Video struct {
 	Series    []VideoInfo
 }
 
-func main() {
-	workPath := "D:/downloads/video/"
+func getVideoList(videoType string) error {
+	path := workPath + "/" + videoType
 
-	//var video Video
+	videoName, err := ioutil.ReadDir(path)
+	if err != nil {
+		return err
+	}
 
-	video := map[string][]string{}
-	videoList := make(map[string]VideoInfo)
+	for _, vn := range videoName { // one punch
+		video[videoType] = append(video[videoType], vn.Name())
+		var videoTmp VideoInfo
+		videoEpisode, err := ioutil.ReadDir(path + "/" + vn.Name())
 
-	videoType, _ := ioutil.ReadDir(workPath)
-	for _, vt := range videoType { // animaion
-		videoName, _ := ioutil.ReadDir(workPath + "/" + vt.Name())
-		for _, vn := range videoName { // one punch
-			video[vt.Name()] = append(video[vt.Name()], vn.Name())
-			var videoTmp VideoInfo
-			videoTmp.name = vn.Name()
-			videoEpisode, _ := ioutil.ReadDir(workPath + "/" + vt.Name() + "/" + vn.Name())
-
-			for _, videoFile := range videoEpisode {
-				fmt.Println(videoFile.Name())
-				if strings.Contains(videoFile.Name(), ".mkv") {
-					videoTmp.episode = append(videoTmp.episode, videoFile.Name())
-				}
-			}
-
-			// get synopsis
-			data, err := goTool.ReadJson(workPath + vt.Name() + "/" + vn.Name() + "/info.json")
-			if err != nil {
-				fmt.Println(err)
-				videoList[vn.Name()] = videoTmp
-				continue
-			}
-			videoTmp.synopsis = data["synopsis"].(string)
-			videoTmp.name = data["name"].(string)
-			videoList[vn.Name()] = videoTmp
+		if err != nil {
+			return err
 		}
 
+		for _, videoFile := range videoEpisode {
+			//fmt.Println(videoFile.Name())
+			if strings.Contains(videoFile.Name(), ".mkv") {
+				videoTmp.episode = append(videoTmp.episode, videoFile.Name())
+			}
+		}
+		// get synopsis
+		data, err := goTool.ReadJson(path + "/" + vn.Name() + "/info.json")
+		if err != nil {
+			fmt.Println(err)
+			videoList[vn.Name()] = videoTmp
+			continue
+		}
+		videoTmp.synopsis = data["synopsis"].(string)
+		videoTmp.name = data["name"].(string)
+		videoList[vn.Name()] = videoTmp
 	}
 	fmt.Println(video)
-	fmt.Println("===============")
-	fmt.Println(videoList)
+	return nil
+}
+
+func main() {
+	//workPath := "D:/downloads/video/"
+	//workPath := "/media/chen/hardDrive/video2"
+
+	if err := getVideoList("animation"); err != nil {
+		fmt.Println(err)
+	}
+	if err := getVideoList("movie"); err != nil {
+		fmt.Println(err)
+	}
+	if err := getVideoList("series"); err != nil {
+		fmt.Println(err)
+	}
 
 	// // http server
 	router := gin.Default()
@@ -107,4 +122,5 @@ func main() {
 	router.Static("/static", "./static")
 
 	router.Run(":5000")
+
 }
